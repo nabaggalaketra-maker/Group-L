@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeRent Uganda - Coursework System</title>
+
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1946/1946488.png">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial;
+}
+
+/* BACKGROUND */
+body{
+    background:url("https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+}
+
+/* DARK OVERLAY */
+body::before{
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:-1;
+}
+
+/* HEADER */
+header{
+    background:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 20px;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    color:#230064;
+}
+
+.logo img{width:35px;}
+
+nav a{
+    margin:0 8px;
+    text-decoration:none;
+    color:#333;
+    font-weight:bold;
+}
+
+nav a:hover{
+    color:#230064;
+}
+
+/* BUTTONS */
+.btn{
+    padding:7px 12px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+.login-btn{background:#230064;color:white;}
+.logout-btn{background:#111;color:white;}
+
+/* SECTIONS */
+section{
+    max-width:1100px;
+    margin:auto;
+    padding:50px 20px;
+    color:white;
+    text-align:center;
+}
+
+/* HERO */
+.hero h1{
+    font-size:40px;
+}
+
+.hero p{
+    font-size:18px;
+    margin-top:10px;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    margin-top:20px;
+}
+
+/* CARD */
+.card{
+    background:white;
+    color:black;
+    padding:20px;
+    border-radius:12px;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+/* CARD BUTTON */
+.card button{
+    margin-top:10px;
+    background:#230064;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+/* POPUP LOGIN */
+.popup{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    padding:20px;
+    width:320px;
+    border-radius:12px;
+    z-index:100;
+}
+
+.popup input{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png">
+        SafeRent Uganda
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#properties">Properties</a>
+        <a href="#law">Law</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <div>
+        <button class="btn login-btn" onclick="openLogin()">Login</button>
+        <button class="btn logout-btn" onclick="logout()">Logout</button>
+    </div>
+</header>
+
+<!-- HOME -->
+<section id="home" class="hero">
+    <h1>Safe Rental Housing System</h1>
+    <p>Find safe homes, avoid scams, and understand your rights</p>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+    <h2>About the System</h2>
+    <div class="card">
+        This system helps tenants find safe rental housing and avoid fraud while learning their rights.
+    </div>
+</section>
+
+<!-- PROPERTIES -->
+<section id="properties">
+    <h2>Available Properties</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <h3>Kampala Apartment</h3>
+            <p>2 Bedrooms | UGX 900,000</p>
+            <button onclick="book('Kampala Apartment')">Book Viewing</button>
+        </div>
+
+        <div class="card">
+            <h3>Makerere House</h3>
+            <p>1 Bedroom | UGX 500,000</p>
+            <button onclick="book('Makerere House')">Book Viewing</button>
+        </div>
+
+        <div class="card">
+            <h3>Entebbe Home</h3>
+            <p>3 Bedrooms | UGX 1,200,000</p>
+            <button onclick="book('Entebbe Home')">Book Viewing</button>
+        </div>
+
+    </div>
+</section>
+
+<!-- LAW -->
+<section id="law">
+    <h2>Rental Rights & Law</h2>
+    <div class="card">
+        Tenants must have agreements. Illegal eviction is not allowed under Ugandan law.
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+    <h2>Contact</h2>
+    <div class="card">
+        SafeRent Uganda | +256 778 004 105
+    </div>
+</section>
+
+<!-- LOGIN POPUP -->
+<div class="popup" id="loginBox">
+
+    <h3>Login / Register</h3>
+
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="text" id="place" placeholder="Location">
+    <input type="password" id="pass" placeholder="Password">
+
+    <button onclick="login()">Submit</button>
+    <button onclick="closeLogin()">Close</button>
+</div>
+
+<script>
+
+let userLogged = null;
+
+/* OPEN LOGIN */
+function openLogin(){
+    document.getElementById("loginBox").style.display="block";
+}
+
+/* CLOSE LOGIN */
+function closeLogin(){
+    document.getElementById("loginBox").style.display="none";
+}
+
+/* LOGIN */
+function login(){
+    let name=document.getElementById("name").value;
+    let place=document.getElementById("place").value;
+    let pass=document.getElementById("pass").value;
+
+    if(name && place && pass){
+        userLogged = name + " (" + place + ")";
+        localStorage.setItem("user", userLogged);
+
+        alert("Welcome " + userLogged);
+        closeLogin();
+    }else{
+        alert("Please fill all fields");
+    }
+}
+
+/* BOOKING */
+function book(property){
+
+    let user = localStorage.getItem("user");
+
+    if(!user){
+        alert("Please login first");
+        openLogin();
+        return;
+    }
+
+    alert(user + " booked viewing for: " + property);
+}
+
+/* LOGOUT */
+function logout(){
+    localStorage.clear();
+    alert("Logged out successfully");
+}
+
+</script>
+
+</body>
+</html>
